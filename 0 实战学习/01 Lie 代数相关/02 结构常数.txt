@@ -1,0 +1,155 @@
+############## 目标如下 ##############
+1.A1的导子变换 √
+2.翻译结构常数 √
+3.正根的单根分解 √
+4.正根按字典序排序 √
+5.正根非单根的extraspecial分解
+6.理清单李代数的结构常数 √
+
+
+#导入编写的函数
+Read("RexLie.grp"); 
+
+# LieExp 计算exp(导子),第二参数默认取0
+# SetTable 批量填写结构常数列表
+# NewTable 新建并填写结构常数列表
+# list2vector 将结构常数中的列表翻译为对应向量
+# SymbolizeTable 将结构常数表格转为符号意义
+# ReadTable 翻译结构常数列表的乘积意义
+
+###### 1.A1的导子变换 ######
+L := SimpleLieAlgebra("A", 1, Rationals);; #新建A1李代数
+b := Basis(L);; #获取李代数的基
+StructureConstantsTable(b); #查看结构常数列表
+e1 := AdjointMatrix(b,b[1]);; #伴随作用矩阵
+f1 := AdjointMatrix(b,b[2]);; 
+n := Size(b);; #获取维数
+
+theta1 := LieExp(e1)*LieExp(-f1)*LieExp(e1);
+
+###### 2.翻译结构常数 ######
+#已存储在函数列表中
+
+
+
+###### 3.正根的单根分解 ######
+s := "F";;n := 4;;
+L := SimpleLieAlgebra(s,n,Rationals);; #生成李代数
+R := RootSystem(L);; #根系
+positive := PositiveRootVectors(R);  #正根系
+delta := List([1..n],i->positive[i]);; #单根系
+
+## positive中元素按序排列 ##
+for i in [1..Size(positive)] do
+    for j in [1..Size(positive)] do
+        if positive[i] > positive[j] then
+            print(i,j);
+        fi;
+    od;
+od;
+
+
+SimpleDecomposition := function(positive,root,n)
+    ## 正根的单根分解，输入为向量形式##
+    local delta,dec,r;
+    delta := List([1..n],i->positive[i]); #单根系
+    dec := []; #初始化单根分解
+    while not root in delta do
+        for r in delta do
+            if (root-r) in positive then
+                Add(dec,r);
+                root := root - r;
+                break;
+            fi;
+        od;
+    od;
+    Add(dec,root);
+    return dec;
+end;;
+
+## 测试 ##
+s := "C";;n := 4;;
+R := RootSystem(SimpleLieAlgebra(s,n,Rationals));;
+positive := PositiveRoots(R);;  #正根系
+
+for i in [1..Size(positive)] do
+    dec := SimpleDecomposition(positive,positive[i],n);
+    index := List(dec,i->Position(positive,i)); #转为索引形式
+    print(i,index);
+od;
+
+
+###### 4.正根按字典序排序 ######
+PositiveSorted := function(positive,n)
+    ## 正根按字典序排序（升序） ##
+    local coos,delta;
+    delta := List([1..n],i->positive[i]); #单根系
+    coos := List(positive,root->Coordination(delta,root)); #获取坐标
+    Sort(coos); #坐标升序
+    return List(coos,coo->Sum(List([1..Size(coo)],i->coo[i]*delta[i])));
+end;; 
+
+## 测试 ##
+s := "C";;n := 4;;
+R := RootSystem(SimpleLieAlgebra(s,n,Rationals));;
+positive := PositiveRoots(R);;  #正根系
+List(PositiveSorted(positive,n),i->Position(positive,i));
+
+
+###### 5.正根非单根的extraspecial分解 ######
+
+ExtraspecialRoots := function(positive,root)
+    ## 正根非单根的extraspecial分解 ##
+    local r,flag;
+    flag := false; #标记是否找到分解
+    #positive := PositiveSorted(positive); #正根集升序
+    for r in positive do
+        if root-r in positive then 
+            flag := true;
+            break;
+        fi;
+    od;
+    if not flag then
+        return fail;
+    else
+        return [r,root-r];
+    fi;
+end;;
+
+## 测试 ##
+s := "E";;n := 6;;
+R := RootSystem(SimpleLieAlgebra(s,n,Rationals));;
+p := PositiveRoots(R);;  #正根系
+ps := PositiveSorted(p,n);;  #正根系（升序）
+for root in p do
+    print(ExtraspecialRoots(ps,root));
+od;
+
+
+###### 6.理清单李代数的结构常数 ######
+s := "E";;n := 6;;
+R := RootSystem(SimpleLieAlgebra(s,n,Rationals));;
+p := PositiveRoots(R);;  #正根系
+pv := PositiveRootVectors(R);; #正根系对应Lie元素
+ps := PositiveSorted(p,n);
+for i in [n+1..Size(p)] do #非正根单根
+    er := ExtraspecialRoots(ps,p[i]); #根分解
+    e1 := Position(p,er[1]);
+    e2 := Position(p,er[2]); #根分解系数的位置
+    print(pv[i],"=",pv[e1],"+",pv[e2]); #打印分解信息
+    e3 := Coordination(pv,pv[e1]*pv[e2])[i]; #获取系数
+    print(StringFormatted("N({1},{2}) = {3}\n",e1,e2,e3));
+od;
+
+
+## 下边函数作废 ##
+SimpleSystemVectors := function(R)
+    ## 返回单根系的李代数元素形式 ##
+    local positive,delta,index;
+    positive := PositiveRoots(R); #正根系
+    delta := SimpleSystem(R); #单根系
+    index := List(delta,i->Position(positive,i)); #单根索引
+    positive := PositiveRootVectors(R); #李代数形式的正根系
+    delta := List(index,i->positive[i]); #李代数形式的单根系
+    return delta;
+end;;

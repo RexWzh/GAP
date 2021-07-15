@@ -1,0 +1,79 @@
+###### 求单李代数的A1模分解 ######
+Read("Rex.grp");
+
+## 编写函数
+IrreducibleA1Module := function(s,n,i,F...)
+    ## 求单李代数的A1模分解 ##
+    local L,R,roots,alpha,beta,weight,max_weights,module,modules;
+    if Size(F)>1 then Error("Input error!");fi;#初始化基域
+    if Size(F)=0 then F:=Rationals;else F:=F[1];fi; 
+    L := SimpleLieAlgebra(s,n,F);; #单李代数
+    R := RootSystem(L);; #根系
+    roots := List(PositiveRoots(R));; #正根系
+    Append(roots,NegativeRoots(R));; #添加负根系
+    alpha := roots[i];; #取A1的正根系alpha_i
+    max_weights := [];; #初始化极大权
+    for beta in roots do
+        if (not alpha+beta in roots) and (alpha<>-beta) then
+            Add(max_weights,beta);
+        fi;
+    od;
+    modules := [];; #不可约模的集合
+    for weight in max_weights do
+        module := [weight];
+        while (weight-alpha in roots) or (weight=alpha) do #遍历alpha链
+            weight := weight-alpha;
+            Add(module,weight);
+        od;
+        Add(modules,module);
+    od;
+    return modules;
+end;;
+lie := [["A",[1..8]],["D",[4..8]],["E",[6..8]],
+["B",[2..8]],["C",[3..8]],["F",[4]],["G",[2]]];;
+
+## 检查函数（调试）
+chk := function(s,n,modules)
+    ## 检查所有模的维数之和 ##
+    local L;
+    L := SimpleLieAlgebra(s,n,Rationals);
+    s := Sum(modules,m->Size(m))+n-1;
+    if not s=Dimension(L) then 
+        Error("Dimension Error");
+    fi;
+    print(true);
+end;
+for x in lie do
+    s := x[1];
+    for i in x[2] do
+        modules:=IrreducibleA1Module(s,i,1);
+        chk(s,i,modules);
+    od;
+od;
+
+## 计算数据
+#A-G族的alpha_1轨道
+for x in lie do 
+    s:=x[1];
+    for i in x[2] do
+        modules := IrreducibleA1Module(s,i,1); #不可约模分解
+        dim := List(modules,module->Size(module)); #分解的维数信息
+        d := Maximum(dim); #最大维数
+        dim := List([1..d],i->[i-1,Number(dim,j->(j=i))]); #合并相同维数
+        dim[1][2] := dim[1][2]+i-1; #加上H的部分
+        Print(s,i,": ",dim,"\n");
+    od;
+od;
+
+#B,C,F,G族另一个轨道
+for x in List([4..7],i->lie[i]) do 
+    s:=x[1];
+    for i in x[2] do
+        modules := IrreducibleA1Module(s,i,i); #不可约模分解
+        dim := List(modules,module->Size(module)); #分解的维数信息
+        d := Maximum(dim); #最大维数
+        dim := List([1..d],i->[i-1,Number(dim,j->(j=i))]); #合并相同维数
+        dim[1][2] := dim[1][2]+i-1; #加上H的部分
+        Print(s,i,": ",dim,"\n");
+    od;
+od;

@@ -1,0 +1,19 @@
+###### 目标如下 ######
+1.计算W对元素的作用轨道
+
+### 1.计算W对元素的作用轨道 ###
+s:="G";;n:=2;;
+L := SimpleLieAlgebra(s,n,Rationals);;
+R := RootSystem(L);;
+W := WeylGroup(R);;
+positive := PositiveRoots(R);;
+
+element := [];; #已遍历的根
+orbits := [];; #轨道集
+for root in positive do
+    if root in element then continue;fi; #跳过已遍历的根
+    orbit := Orbit(W,root);
+    Add(orbits,orbit);
+    UniteSet(element,orbit); #集合合并
+od;
+Print(Size(orbits));

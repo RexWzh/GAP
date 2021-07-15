@@ -1,0 +1,90 @@
+############ 目标如下 ############
+1.编写M关系生成自由群
+2.检验bigwely群是否被关系确定(否）
+3.导出bigwely群一些信息
+4.检验bigwely与wely群的商关系
+#3.求A-G族李代数的weyl群(考虑用根系）
+
+
+###### 1.编写M关系生成自由群 ######
+
+GroupByRelations := function(M) 
+    ## 求关系矩阵M生成的自由群 ##
+    local G,n,K,i,j,gens;
+    n := Size(M); #不定元数目
+    G := FreeGroup(n);#初始化自由群
+    gens := GeneratorsOfGroup(G);
+    K := []; #初始化集合K，张成kernal
+    for i in [1..n] do  #第i行
+        for j in [1..n] do #第j列
+            Add(K,(gens[i]*gens[j])^M[i][j]);
+        od;
+    od;
+    return G/K;
+end;;
+
+###### 2.检验bigwely群是否被关系确定 ######
+
+s := "A";;
+n := 2;;
+M := GroupOrdersMat(LieThetas(s,n));
+Gm := GroupByRelations(M);;
+G := Group(LieThetas(s,n));
+# 答案是：否。。。oh no
+
+
+###### 3.导出bigwely群一些信息 ######
+Size(Group(LieThetas("A",2)));
+StructureDescription(G);
+
+chk := function(s,m,n)
+    ## 获取bigwely群结构信息 ##
+    local G,i,str;
+    str := []; #收集字符串
+    for i in [m..n] do
+        G := Group(LieThetas(s,i));
+        Add(str,StringFormatted("{}{}: ",s,i));
+        i := StructureDescription(G); #存储群信息
+        Add(str,i); #添加字符串
+        Add(str,"\n");
+        print(i);
+    od;
+    return JoinStringsWithSeparator(str,"");
+end;;
+
+chk := function(s,m,n)
+    ## 获取bigwely群的生成元 ##
+    local G,i,str,ele,row;
+    str := []; #收集字符串
+    for i in [m..n] do
+        Add(str,StringFormatted("{}{}:\n",s,i));
+        for ele in LieThetas(s,i) do
+            for row in ele do
+                Add(str,row);
+                Add(str,"\n");
+            od;
+            Add(str,"\n");
+        od;
+        Add(str,"\n\n");
+        print(i);
+    od;
+    return JoinStringsWithSeparator(str,"");
+end;;
+
+StructureDescription(Group(List(LieThetas("A",4),x->x^2)));
+
+
+###### 4.检验bigwely与wely群的商关系 ######
+s := "E";;
+n := 8;;
+for i in [6..n] do
+    theta := LieThetas(s,i);;
+    G:=Group(theta);;
+    K:=Group(List(theta,x->x^2));;
+    print(Size(G/K));
+od;
+
+theta := LieThetas("F",4);;
+G:=Group(theta);;
+K:=Group(List(theta,x->x^2));;
+print(Size(G/K));

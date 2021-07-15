@@ -1,0 +1,54 @@
+###### 目标如下 ######
+1.检验sl(3,F)是否半单
+2.检验sl(3,F)/中心 是否半单
+3.检验sl(3,F)/中心 的killing矩阵
+
+IsSimpleLieAlgebra := function(L)
+    ## 判断是否为单李代数（仅可验证有限域） ##
+    local i,ideal;
+    for i in L do #跳过0元
+        if i=Zero(L) then continue;fi; #跳过零元
+        ideal := Ideal(L,[i]); #元素生成理想
+        if not ideal=L then #若某个元素生成理想不为L
+            return ideal;
+        fi;
+    od;
+    return true;
+end;;
+
+L := SimpleLieAlgebra("A",2,GF(3));; #sl(3,F),charF=3
+IsSimpleLieAlgebra(L); #判断是否单
+C := LieCenter(L);; #L的中心
+Lc := L/C;; #L商中心
+IsSimpleLieAlgebra(Lc); #判断是否单
+KillingMatrix(Basis(Lc)); #求killing型矩阵
+
+
+LieIdeals := function(L)
+    ## 求L的所有理想（仅针对有限域） ##
+    local i,ideal,ideals;
+    ideals := []; #初始化理想集
+    for i in L do
+        ideal := Ideal(L,[i]);
+        if not ideal in ideals then 
+            Add(ideals,ideal);
+        fi;
+    od;
+    return ideals;
+end;;
+
+
+###### 判断李代数是否半单 ######
+## 方法1 ##
+1.先求出李代数所有理想
+2.按包含关系得到所有极小理想
+3.检验李代数是否为极小理想的直和
+4.每个极小理想是否单
+
+## 方法2 偏否检测 ##
+1.检查L是否幂等
+2.检查李代数的一些特殊子理想是否幂等
+3.逐个求李代数的非平凡理想，验证是否幂等
+
+
+检验极小理想

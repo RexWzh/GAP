@@ -1,0 +1,66 @@
+QQQ:coxeter中，T与G.N应该是相等的？
+
+########### 计算不同阶R多项式的种类 ##########
+R_polynomial_ranks := function(G,k)
+    local H,q,T,elements,w,x,a,lx,lw,l,Tw,ranks;
+    
+    #数据初始化
+    q := X(Rationals);	#不定元
+    q.name := "q";
+    H := Hecke(G,q);	#Hecke代数
+    T := Basis(H,"T");	#H的T基    
+    elements := Elements(G);#G的元素集合，从小到大排列
+    ranks := [];	#初始化多项式集
+    #R := [0*q];		#已生成多项式
+    for x in [1..G.N] do #1-G.N阶
+        Add(ranks,[]);
+    od;
+
+    for w in elements do
+        lw := CoxeterLength(G,w); #w的长度
+        Tw := T(w^-1)^-1;	#Tw^-1的逆
+        for x in elements do
+            lx := CoxeterLength(G,x); #x长度
+            l := lw - lx;
+            if l > k then
+                a := (-q)^lw*(-1)^lx*Coefficient(Tw,x); #Rx,w
+                if not (a=0*q or a in ranks[l]) then
+                    Add(ranks[l],a);
+                fi;
+            fi;
+        od;
+    od;
+    return ranks;
+end;;
+
+
+### 代码实例 ###
+#二面体群
+for n in [2..10] do 
+    Print("n = ",n,"\n");
+    PrintList(R_polynomial_ranks(CoxeterGroup("I",2,n),0));
+    Print("\n\n");
+od;
+
+#A型 
+s := "A";
+for n in [1..5] do
+    ranks := R_polynomial_ranks(CoxeterGroup(s,n),0);
+    size := Sum(List(ranks,Length));
+    Print("n : ",n,"\n Length : ",size,"\n");
+    PrintList(ranks);
+    Print("\n\n");
+od;
+
+#阶性质
+s := "D";
+for n in [1..5] do
+    G := CoxeterGroup(s,n);
+    ranks := R_polynomial_ranks(G,0);
+    l := List(ranks,Length);
+    Print("n : ",n,"\npolynomial size : ",Sum(l),"\ngroup size : ",Size(G),"\n");
+    for i in [1..Length(l)] do
+        Print("level_",i," : ",l[i],"\n");
+    od;
+    Print("\n\n");
+od;

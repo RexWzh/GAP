@@ -1,0 +1,49 @@
+############ 目标如下 ############
+1.向量在基下的系数
+2.构造内积
+
+
+###### 1.向量在基下的系数 ######
+
+Coordination := function(basis,vector)
+    ## 计算向量在基下的坐标 ##
+    local V;
+    V := VectorSpace(Rationals,basis);; #生成线性空间
+    basis := Basis(V,basis); #将向量集转化为基
+    return Coefficients(basis,vector);
+end;;
+
+## 测试 ##
+L := SimpleLieAlgebra("A",3,Rationals);; #生成李代数
+R := RootSystem(L);; #根系
+positive := PositiveRoots(R);; #正根集列表
+delta := SimpleSystem(R);; #单根系（列表）
+for root in positive do
+    print(Coordination(delta,root));
+od;
+
+
+###### 2.构造内积 ######
+B := function(alpha,beta,R)
+    ## 根系R下，向量killing型内积 ##
+    local basis;
+    basis := SimpleSystem(R); #单根系作为基向量
+    alpha := Coordination(basis,alpha); #转化为坐标
+    beta := Coordination(basis,beta);
+    return alpha*BilinearFormMat(R)*beta; #计算内积（通过内积矩阵）
+end;;
+
+## 测试 求Cartan矩阵 ##
+L := SimpleLieAlgebra("A",3,Rationals);; #生成李代数
+R := RootSystem(L);; #根系
+delta := SimpleSystem(R);; #正根集列表
+A := [];;
+n := Size(delta);;
+for i in [1..n] do
+    Add(A,[]);
+    for j in [1..n] do
+        Add(A[i],2*B(delta[i],delta[j],R)/B(delta[i],delta[i],R));
+    od;
+od;
+print(A);
+print(CartanMatrix(R));

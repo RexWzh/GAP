@@ -1,0 +1,35 @@
+### GAP3 与 GAP4 区别 ###
+GAP3 循环没有break？
+GAP3 函数不能中间return？
+
+
+
+
+
+PageResource 	#获取源代码
+
+Display		 #以合适形式打印
+
+Filtered(list,fun) #保留list上函数判断成立的元素
+
+List(list,fun)	 #list依次代入fun，输出值得到新列表
+
+PrintArray 	#打印格式 
+
+Size() 		#结构的阶
+
+Length()	#列表的阶
+
+Reversed()	#列表反转
+
+TransposedMat()	#列表转置（需要二维）
+
+
+
+### record assignment ###
+
+r := rec()	#初始化record类型
+
+rec.name := obj	#设置后缀
+
+### 群等结构本身为record类型，可以为其定义后缀 ###

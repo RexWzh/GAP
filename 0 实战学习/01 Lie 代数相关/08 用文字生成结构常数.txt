@@ -1,0 +1,44 @@
+###### 目标如下 ######
+1.检索翻译文字中的信息
+2.生成结构常数表格
+3.设置SetTable
+##进展 ##
+LieSCTable 增加check功能，默认不检查，true时，检查jacobi幺性质以及对角线
+学习string的基本操作，从string中提取乘积信息。
+
+
+### 1.检索翻译文字中的信息 ###
+
+
+### 2.生成结构常数表格 ###
+LieSCTable := function(n,string_or_list)
+    ## 生成李代数的结构常数表格 ##
+    local T;
+    T := EmptySCTable(n,0,"antisymmetric");; #新建结构常数列表
+    SetTable(T,string_or_list);
+    return T;
+end;;
+
+
+### 3.设置SetTable ###
+SetTable := function(T,string_or_list) 
+    ## 批量填写结构常数列表 ##
+    local i,n,l1,l2,l3,flag,list,string;
+    if IsList(string_or_list) then #判断为列表，直接赋值
+        list := String_or_list;
+    else
+        if IsString(string_or_list) then #判断为字符串，先转化为列表
+            string := string_or_list;
+        
+        else #判断为其他，报错！
+            Error("please input a string or a list");
+        fi;
+    fi;
+    n := Size(list)/3;; #填入数目为n
+    l1 := List([1..n],i->list[3*i-2]); #行位置
+    l2 := List([1..n],i->list[3*i-1]); #列位置
+    l3 := List([1..n],i->list[3*i]);   #该位置上的向量
+    for i in [1..n] do
+        SetEntrySCTable(T,l1[i],l2[i],l3[i]); #填写表格
+    od;
+end;;

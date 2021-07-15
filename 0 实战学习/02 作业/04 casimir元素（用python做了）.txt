@@ -1,0 +1,47 @@
+###### 内容如下 ######
+1.对偶基函数
+2.casimir元素
+
+
+### 1.对偶基函数 ###
+DualBasis := function(basis,M)
+    ## 求basis关于内积矩阵M的对偶基 ##
+    local new_basis;
+    M := TransposedMat(M^-1); #矩阵转置（每一行为向量坐标）
+    new_basis := List(M,row->LinearCombination(basis,row));
+    return new_basis;
+end;
+
+## 测试 ##
+s := "A";;n:=1;;F:=Rationals;;
+L := SimpleLieAlgebra(s,n,F);; #单李代数
+basis := Basis(L);; #获取标准基
+ad_basis := List(basis,i->AdjointMatrix(basis,i));;
+K := KillingMatrix(basis);; #killing矩阵（内积阵）
+dual_basis := DualBasis(ad_basis,K);;
+DualBasis(dual_basis,TransposedMat(K^-1))=ad_basis;
+
+for i in ad_basis do
+    pprint(i); print();
+od;
+
+for i in dual_basis do
+    pprint(i); print();
+od;
+
+CasimirElement := function(s,n,F...)
+    ## 计算单李代数关于伴随表示的casimir元素 ##
+    local basis,dual_basis,ad_basis,K,L,casimir;
+    if Size(F)=0 then
+        F := Rationals; #默认讨论特征零域
+    else 
+        F := F[1]; 
+    fi;
+    L := SimpleLieAlgebra(s,n,F); #单李代数
+    basis := Basis(L); #获取标准基
+    K := KillingMatrix(basis); #killing矩阵（内积阵）
+    ad_basis := List(basis,i->AdjointMatrix(basis,i)); #基的伴随作用矩阵
+    dual_basis := DualBasis(ad_basis,K); #计算对偶基
+    casimir := Sum([1..Size(basis)],i->ad_basis[i]*dual_basis[i]); #计算casimir元素
+    return casimir;
+end;

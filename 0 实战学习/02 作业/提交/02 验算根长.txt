@@ -1,0 +1,48 @@
+lie := [["A",[1..8]],["D",[4..8]],["E",[6..8]],
+["B",[2..8]],["C",[3..8]],["F",[4]],["G",[2]]];;
+for x in lie do 
+    s:=x[1];
+    res := [];; #返回结果
+    for i in x[2] do
+        L := SimpleLieAlgebra(s,i,Rationals); #单李代数（特征0域）
+        R := RootSystem(L);
+        p := Size(PositiveRoots(R)); #正根个数
+        M := KillingMatrix(Basis(L)); #killing型矩阵
+        if s in ["A","D","E"] then 
+            Add(res,[i,M[1][p+1]]);
+        else
+           Add(res,[i,M[1][p+1],M[i][p+i]]); #添加非零结果
+        fi;
+    od;
+    Print(s,": ",res,"\n");
+od;
+
+
+
+### 作业 ###
+gap> lie := [["A",[1..8]],["D",[4..8]],["E",[6..8]],
+> ["B",[2..8]],["C",[3..8]],["F",[4]],["G",[2]]];;
+gap> for x in lie do
+        R := RootSystem(L);
+>     s:=x[1];
+>     res := [];; #返回结果
+>     for i in x[2] do
+>         L := SimpleLieAlgebra(s,i,Rationals); #单李代数（特征0域）
+>         R := RootSystem(L);
+>         p := Size(PositiveRoots(R)); #正根个数
+>         M := KillingMatrix(Basis(L)); #killing型矩阵
+>         if s in ["A","D","E"] then
+>             Add(res,[i,M[1][p+1]]);
+>         else
+>            Add(res,[i,M[1][p+1],M[i][p+i]]); #添加非零结果
+>         fi;
+>     od;
+>     Print(s,": ",res,"\n");
+> od;
+A: [ [ 1, 4 ], [ 2, 6 ], [ 3, 8 ], [ 4, 10 ], [ 5, 12 ], [ 6, 14 ], [ 7, 16 ], [ 8, 18 ] ]
+D: [ [ 4, 12 ], [ 5, 16 ], [ 6, 20 ], [ 7, 24 ], [ 8, 28 ] ]
+E: [ [ 6, 24 ], [ 7, 36 ], [ 8, 60 ] ]
+B: [ [ 2, 6, 12 ], [ 3, 10, 20 ], [ 4, 14, 28 ], [ 5, 18, 36 ], [ 6, 22, 44 ], [ 7, 26, 52 ], [ 8, 30, 60 ] ]
+C: [ [ 3, 16, 8 ], [ 4, 20, 10 ], [ 5, 24, 12 ], [ 6, 28, 14 ], [ 7, 32, 16 ], [ 8, 36, 18 ] ]
+F: [ [ 4, 36, 18 ] ]
+G: [ [ 2, 24, 8 ] ]

@@ -1,0 +1,78 @@
+function ( arglist, filter )
+    local T, n, R, zero, names, Fam, A, gens;
+    if not 1 < Length( arglist ) and IsRing( arglist[1] ) and IsList( arglist[2] ) then
+        Error( "usage: AlgebraByStructureConstantsArg([<R>,<sctable>]) or \n",
+         "AlgebraByStructureConstantsArg([<R>,<sctable>,<name1>,...])" );
+    fi;
+    R := arglist[1];
+    zero := Zero( R );
+    T := arglist[2];
+    if zero = T[Length( T )] then
+        T := Immutable( T );
+    else
+        if T[Length( T )] = 0 then
+            T := ReducedSCTable( T, One( zero ) );
+        else
+            Error( "<R> and <T> are not compatible" );
+        fi;
+    fi;
+    if Length( T ) = 2 then
+        n := 0;
+    else
+        n := Length( T[1] );
+    fi;
+    if Length( arglist ) = 2 then
+        names := List( [ 1 .. n ], function ( x )
+                return Concatenation( "v.", String( x ) );
+            end );
+        MakeImmutable( names );
+    elif Length( arglist ) = 3 and IsString( arglist[3] ) then
+        names := List( [ 1 .. n ], function ( x )
+                return Concatenation( arglist[3], String( x ) );
+            end );
+        MakeImmutable( names );
+    elif Length( arglist ) = 3 and IsHomogeneousList( arglist[3] ) and Length( arglist[3] ) = n
+        and ForAll( arglist[3], IsString ) then
+        names := Immutable( arglist[3] );
+    elif Length( arglist ) = 2 + n then
+        names := Immutable( arglist{[ 3 .. Length( arglist ) ]} );
+    else
+        Error( "usage: AlgebraByStructureConstantsArg([<R>,<sctable>]) or \n",
+         "AlgebraByStructureConstantsArg([<R>,<sctable>,<name1>,...])" );
+    fi;
+    if IsAdditivelyCommutativeElementFamily( FamilyObj( zero ) ) then
+        filter := filter and IsAdditivelyCommutativeElement;
+    fi;
+    Fam := NewFamily( "SCAlgebraObjFamily", filter );
+    if Zero( ElementsFamily( FamilyObj( R ) ) ) <> fail then
+        SetFilterObj( Fam, IsFamilyOverFullCoefficientsFamily );
+    else
+        Fam!.coefficientsDomain := R;
+    fi;
+    Fam!.sctable := T;
+    Fam!.names := names;
+    Fam!.zerocoeff := zero;
+    Fam!.defaultTypeDenseCoeffVectorRep := NewType( Fam, IsSCAlgebraObj and IsDenseCoeffVectorRep );
+    SetCharacteristic( Fam, Characteristic( R ) );
+    SetCoefficientsFamily( Fam, ElementsFamily( FamilyObj( R ) ) );
+    if 0 < n then
+        SetZero( Fam, ObjByExtRep( Fam, List( [ 1 .. n ], function ( x )
+                  return zero;
+              end ) ) );
+        gens := Immutable( List( IdentityMat( n, R ), function ( x )
+                  return ObjByExtRep( Fam, x );
+              end ) );
+        A := FLMLORByGenerators( R, gens );
+        UseBasis( A, gens );
+    else
+        SetZero( Fam, ObjByExtRep( Fam, EmptyRowVector( FamilyObj( zero ) ) ) );
+        gens := Immutable( [  ] );
+        A := FLMLORByGenerators( R, gens, Zero( Fam ) );
+        SetIsTrivial( A, true );
+        SetDimension( A, 0 );
+    fi;
+    Fam!.basisVectors := gens;
+    Fam!.fullSCAlgebra := A;
+    SetIsFullSCAlgebra( A, true );
+    return A;
+end

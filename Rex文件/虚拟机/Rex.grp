@@ -1,0 +1,5 @@
+## 导入所有自定义函数 ##
+Read("local\\pkg\\RexStandard.grp");
+Read("local\\pkg\\RexLie.grp");
+Rex := [RexStandard,RexLie,
+"Rex: RexStandard RexLie"];

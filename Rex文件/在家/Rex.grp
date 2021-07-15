@@ -1,0 +1,12 @@
+### 家用电脑工作环境 ###
+
+Join := function(args...)
+    ## 连接字符串 ##
+    return JoinStringsWithSeparator(args,"");
+end;;
+
+local_path := "F:\\ProgrammingGAP\\pkg\\";
+Read(Join(local_path,"RexStandard.grp"));
+Read(Join(local_path,"RexLie.grp"));
+Rex := [RexStandard,RexLie,
+"Rex: RexStandard RexLie"];

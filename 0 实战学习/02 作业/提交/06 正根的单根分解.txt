@@ -1,0 +1,295 @@
+gap> Coordination := function(basis,vector)
+>     ## 计算向量在基下的坐标 ##
+>     local V;
+>     V := VectorSpace(Rationals,basis);; #生成线性空间
+>     basis := Basis(V,basis); #将向量集转化为基
+>     return Coefficients(basis,vector);
+> end;;
+gap> Join := function(args...)
+>     ## 连接字符串 ##
+>     return JoinStringsWithSeparator(args,"");
+> end;;
+gap> lie := [["A",[1..8]],["D",[4..8]],["E",[6..8]],
+>     s:=x[1];
+["B",[2..8]],["C",[3..8]],["F",[4]],["G",[2]]];;
+gap> for x in lie do
+>     s:=x[1];
+>     for i in x[2] do #单李代数逐个讨论
+>         Print(s,i,"\n");
+>         R := RootSystem(SimpleLieAlgebra(s,i,Rationals)); #根系
+>         positive := PositiveRoots(R); #正根集
+>         delta := SimpleSystem(R); #单根集
+>         sym := List([1..i],j->X(Rationals,Join("a",j))); #符号变量
+>         for root in positive do
+>             coo := Coordination(delta,root); #正根坐标
+>             root_sym := Sum([1..i],j->coo[j]*sym[j]);
+>             Print(root_sym,"\n");
+>         od;
+>         Print("\n");
+>     od;
+> od;
+
+## 输出结果（数据较多，仅附上有限族的结果）
+G2
+a1
+a2
+a1+a2
+2*a1+a2
+3*a1+a2
+3*a1+2*a2
+
+
+F4
+a1
+a2
+a3
+a4
+a1+a3
+a2+a4
+a3+a4
+a1+a3+a4
+a2+a3+a4
+2*a3+a4
+a1+a2+a3+a4
+a1+2*a3+a4
+a2+2*a3+a4
+a1+a2+2*a3+a4
+2*a1+2*a3+a4
+a2+2*a3+2*a4
+a1+a2+2*a3+2*a4
+2*a1+a2+2*a3+a4
+a1+a2+3*a3+2*a4
+2*a1+a2+2*a3+2*a4
+2*a1+a2+3*a3+2*a4
+2*a1+a2+4*a3+2*a4
+2*a1+a2+4*a3+3*a4
+2*a1+2*a2+4*a3+3*a4
+
+
+E6
+a1
+a2
+a3
+a4
+a5
+a6
+a1+a3
+a2+a4
+a3+a4
+a4+a5
+a5+a6
+a1+a3+a4
+a2+a3+a4
+a2+a4+a5
+a3+a4+a5
+a4+a5+a6
+a1+a2+a3+a4
+a1+a3+a4+a5
+a2+a3+a4+a5
+a2+a4+a5+a6
+a3+a4+a5+a6
+a1+a2+a3+a4+a5
+a1+a3+a4+a5+a6
+a2+a3+2*a4+a5
+a2+a3+a4+a5+a6
+a1+a2+a3+2*a4+a5
+a1+a2+a3+a4+a5+a6
+a2+a3+2*a4+a5+a6
+a1+a2+2*a3+2*a4+a5
+a1+a2+a3+2*a4+a5+a6
+a2+a3+2*a4+2*a5+a6
+a1+a2+2*a3+2*a4+a5+a6
+a1+a2+a3+2*a4+2*a5+a6
+a1+a2+2*a3+2*a4+2*a5+a6
+a1+a2+2*a3+3*a4+2*a5+a6
+a1+2*a2+2*a3+3*a4+2*a5+a6
+
+E7
+a1
+a2
+a3
+a4
+a5
+a6
+a7
+a1+a3
+a2+a4
+a3+a4
+a4+a5
+a5+a6
+a6+a7
+a1+a3+a4
+a2+a3+a4
+a2+a4+a5
+a3+a4+a5
+a4+a5+a6
+a5+a6+a7
+a1+a2+a3+a4
+a1+a3+a4+a5
+a2+a3+a4+a5
+a2+a4+a5+a6
+a3+a4+a5+a6
+a4+a5+a6+a7
+a1+a2+a3+a4+a5
+a1+a3+a4+a5+a6
+a2+a3+2*a4+a5
+a2+a3+a4+a5+a6
+a2+a4+a5+a6+a7
+a3+a4+a5+a6+a7
+a1+a2+a3+2*a4+a5
+a1+a2+a3+a4+a5+a6
+a1+a3+a4+a5+a6+a7
+a2+a3+2*a4+a5+a6
+a2+a3+a4+a5+a6+a7
+a1+a2+2*a3+2*a4+a5
+a1+a2+a3+2*a4+a5+a6
+a1+a2+a3+a4+a5+a6+a7
+a2+a3+2*a4+2*a5+a6
+a2+a3+2*a4+a5+a6+a7
+a1+a2+2*a3+2*a4+a5+a6
+a1+a2+a3+2*a4+2*a5+a6
+a1+a2+a3+2*a4+a5+a6+a7
+a2+a3+2*a4+2*a5+a6+a7
+a1+a2+2*a3+2*a4+2*a5+a6
+a1+a2+2*a3+2*a4+a5+a6+a7
+a1+a2+a3+2*a4+2*a5+a6+a7
+a2+a3+2*a4+2*a5+2*a6+a7
+a1+a2+2*a3+3*a4+2*a5+a6
+a1+a2+2*a3+2*a4+2*a5+a6+a7
+a1+a2+a3+2*a4+2*a5+2*a6+a7
+a1+2*a2+2*a3+3*a4+2*a5+a6
+a1+a2+2*a3+3*a4+2*a5+a6+a7
+a1+a2+2*a3+2*a4+2*a5+2*a6+a7
+a1+2*a2+2*a3+3*a4+2*a5+a6+a7
+a1+a2+2*a3+3*a4+2*a5+2*a6+a7
+a1+2*a2+2*a3+3*a4+2*a5+2*a6+a7
+a1+a2+2*a3+3*a4+3*a5+2*a6+a7
+a1+2*a2+2*a3+3*a4+3*a5+2*a6+a7
+a1+2*a2+2*a3+4*a4+3*a5+2*a6+a7
+a1+2*a2+3*a3+4*a4+3*a5+2*a6+a7
+2*a1+2*a2+3*a3+4*a4+3*a5+2*a6+a7
+
+E8
+a1
+a2
+a3
+a4
+a5
+a6
+a7
+a8
+a1+a3
+a2+a4
+a3+a4
+a4+a5
+a5+a6
+a6+a7
+a7+a8
+a1+a3+a4
+a2+a3+a4
+a2+a4+a5
+a3+a4+a5
+a4+a5+a6
+a5+a6+a7
+a6+a7+a8
+a1+a2+a3+a4
+a1+a3+a4+a5
+a2+a3+a4+a5
+a2+a4+a5+a6
+a3+a4+a5+a6
+a4+a5+a6+a7
+a5+a6+a7+a8
+a1+a2+a3+a4+a5
+a1+a3+a4+a5+a6
+a2+a3+2*a4+a5
+a2+a3+a4+a5+a6
+a2+a4+a5+a6+a7
+a3+a4+a5+a6+a7
+a4+a5+a6+a7+a8
+a1+a2+a3+2*a4+a5
+a1+a2+a3+a4+a5+a6
+a1+a3+a4+a5+a6+a7
+a2+a3+2*a4+a5+a6
+a2+a3+a4+a5+a6+a7
+a2+a4+a5+a6+a7+a8
+a3+a4+a5+a6+a7+a8
+a1+a2+2*a3+2*a4+a5
+a1+a2+a3+2*a4+a5+a6
+a1+a2+a3+a4+a5+a6+a7
+a1+a3+a4+a5+a6+a7+a8
+a2+a3+2*a4+2*a5+a6
+a2+a3+2*a4+a5+a6+a7
+a2+a3+a4+a5+a6+a7+a8
+a1+a2+2*a3+2*a4+a5+a6
+a1+a2+a3+2*a4+2*a5+a6
+a1+a2+a3+2*a4+a5+a6+a7
+a1+a2+a3+a4+a5+a6+a7+a8
+a2+a3+2*a4+2*a5+a6+a7
+a2+a3+2*a4+a5+a6+a7+a8
+a1+a2+2*a3+2*a4+2*a5+a6
+a1+a2+2*a3+2*a4+a5+a6+a7
+a1+a2+a3+2*a4+2*a5+a6+a7
+a1+a2+a3+2*a4+a5+a6+a7+a8
+a2+a3+2*a4+2*a5+2*a6+a7
+a2+a3+2*a4+2*a5+a6+a7+a8
+a1+a2+2*a3+3*a4+2*a5+a6
+a1+a2+2*a3+2*a4+2*a5+a6+a7
+a1+a2+2*a3+2*a4+a5+a6+a7+a8
+a1+a2+a3+2*a4+2*a5+2*a6+a7
+a1+a2+a3+2*a4+2*a5+a6+a7+a8
+a2+a3+2*a4+2*a5+2*a6+a7+a8
+a1+2*a2+2*a3+3*a4+2*a5+a6
+a1+a2+2*a3+3*a4+2*a5+a6+a7
+a1+a2+2*a3+2*a4+2*a5+2*a6+a7
+a1+a2+2*a3+2*a4+2*a5+a6+a7+a8
+a1+a2+a3+2*a4+2*a5+2*a6+a7+a8
+a2+a3+2*a4+2*a5+2*a6+2*a7+a8
+a1+2*a2+2*a3+3*a4+2*a5+a6+a7
+a1+a2+2*a3+3*a4+2*a5+2*a6+a7
+a1+a2+2*a3+3*a4+2*a5+a6+a7+a8
+a1+a2+2*a3+2*a4+2*a5+2*a6+a7+a8
+a1+a2+a3+2*a4+2*a5+2*a6+2*a7+a8
+a1+2*a2+2*a3+3*a4+2*a5+2*a6+a7
+a1+2*a2+2*a3+3*a4+2*a5+a6+a7+a8
+a1+a2+2*a3+3*a4+3*a5+2*a6+a7
+a1+a2+2*a3+3*a4+2*a5+2*a6+a7+a8
+a1+a2+2*a3+2*a4+2*a5+2*a6+2*a7+a8
+a1+2*a2+2*a3+3*a4+3*a5+2*a6+a7
+a1+2*a2+2*a3+3*a4+2*a5+2*a6+a7+a8
+a1+a2+2*a3+3*a4+3*a5+2*a6+a7+a8
+a1+a2+2*a3+3*a4+2*a5+2*a6+2*a7+a8
+a1+2*a2+2*a3+4*a4+3*a5+2*a6+a7
+a1+2*a2+2*a3+3*a4+3*a5+2*a6+a7+a8
+a1+2*a2+2*a3+3*a4+2*a5+2*a6+2*a7+a8
+a1+a2+2*a3+3*a4+3*a5+2*a6+2*a7+a8
+a1+2*a2+3*a3+4*a4+3*a5+2*a6+a7
+a1+2*a2+2*a3+4*a4+3*a5+2*a6+a7+a8
+a1+2*a2+2*a3+3*a4+3*a5+2*a6+2*a7+a8
+a1+a2+2*a3+3*a4+3*a5+3*a6+2*a7+a8
+2*a1+2*a2+3*a3+4*a4+3*a5+2*a6+a7
+a1+2*a2+3*a3+4*a4+3*a5+2*a6+a7+a8
+a1+2*a2+2*a3+4*a4+3*a5+2*a6+2*a7+a8
+a1+2*a2+2*a3+3*a4+3*a5+3*a6+2*a7+a8
+2*a1+2*a2+3*a3+4*a4+3*a5+2*a6+a7+a8
+a1+2*a2+3*a3+4*a4+3*a5+2*a6+2*a7+a8
+a1+2*a2+2*a3+4*a4+3*a5+3*a6+2*a7+a8
+2*a1+2*a2+3*a3+4*a4+3*a5+2*a6+2*a7+a8
+a1+2*a2+3*a3+4*a4+3*a5+3*a6+2*a7+a8
+a1+2*a2+2*a3+4*a4+4*a5+3*a6+2*a7+a8
+2*a1+2*a2+3*a3+4*a4+3*a5+3*a6+2*a7+a8
+a1+2*a2+3*a3+4*a4+4*a5+3*a6+2*a7+a8
+2*a1+2*a2+3*a3+4*a4+4*a5+3*a6+2*a7+a8
+a1+2*a2+3*a3+5*a4+4*a5+3*a6+2*a7+a8
+2*a1+2*a2+3*a3+5*a4+4*a5+3*a6+2*a7+a8
+a1+3*a2+3*a3+5*a4+4*a5+3*a6+2*a7+a8
+2*a1+3*a2+3*a3+5*a4+4*a5+3*a6+2*a7+a8
+2*a1+2*a2+4*a3+5*a4+4*a5+3*a6+2*a7+a8
+2*a1+3*a2+4*a3+5*a4+4*a5+3*a6+2*a7+a8
+2*a1+3*a2+4*a3+6*a4+4*a5+3*a6+2*a7+a8
+2*a1+3*a2+4*a3+6*a4+5*a5+3*a6+2*a7+a8
+2*a1+3*a2+4*a3+6*a4+5*a5+4*a6+2*a7+a8
+2*a1+3*a2+4*a3+6*a4+5*a5+4*a6+3*a7+a8
+2*a1+3*a2+4*a3+6*a4+5*a5+4*a6+3*a7+2*a8
+
+
+

@@ -1,0 +1,83 @@
+n : 1
+polynomial size : 1
+group size : 2
+level_1 : 1
+
+
+n : 2
+polynomial size : 3
+group size : 6
+level_1 : 1
+level_2 : 1
+level_3 : 1
+
+
+n : 3
+polynomial size : 9
+group size : 24
+level_1 : 1
+level_2 : 1
+level_3 : 2
+level_4 : 2
+level_5 : 2
+level_6 : 1
+
+
+n : 4
+polynomial size : 24
+group size : 120
+level_1 : 1
+level_2 : 1
+level_3 : 2
+level_4 : 2
+level_5 : 4
+level_6 : 4
+level_7 : 4
+level_8 : 3
+level_9 : 2
+level_10 : 1
+
+
+n : 5
+polynomial size : 80
+group size : 720
+level_1 : 1
+level_2 : 1
+level_3 : 2
+level_4 : 2
+level_5 : 4
+level_6 : 5
+level_7 : 7
+level_8 : 9
+level_9 : 12
+level_10 : 12
+level_11 : 10
+level_12 : 7
+level_13 : 5
+level_14 : 2
+level_15 : 1
+
+n : 6
+polynomial size : 298
+group size : 5040
+level_1 : 1
+level_2 : 1
+level_3 : 2
+level_4 : 2
+level_5 : 4
+level_6 : 5
+level_7 : 7
+level_8 : 10
+level_9 : 16
+level_10 : 22
+level_11 : 30
+level_12 : 37
+level_13 : 41
+level_14 : 36
+level_15 : 32
+level_16 : 20
+level_17 : 15
+level_18 : 9
+level_19 : 5
+level_20 : 2
+level_21 : 1

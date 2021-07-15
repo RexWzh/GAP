@@ -1,0 +1,44 @@
+########### 三个小任务 ###########
+1.新建李代数
+2.用结构常数新建李代数
+3.ad变换
+
+###### 1.新建李代数 ######
+
+L := SimpleLieAlgebra("A", 1, Rationals); #新建A1李代数
+b := Basis(L); #获取李代数的基
+T := StructureConstantsTable(b); #获取结构常数列表
+
+
+
+###### 2.通过结构常数新建李代数 ######
+
+Read("Rex.grp"); #导入SetTable
+
+## 新建结构常数列表 ##
+T := NewTable(3,[1,2,[1,3],1,3,[-2,1],2,1,[-1,3],2,3,[2,2],3,1,[2,1],3,2,[-2,2]]);
+
+## 生成代数 ##
+A := AlgebraByStructureConstants( Rationals, T );
+IsLieAlgebra(A); #判断是否为李代数
+IsSimpleAlgebra(A); #判断是否为单代数（否的情况可能计算不出）
+
+## 重点 ##
+SetEntrySCTable(T,i,j,[coef1,vec2,...]) #表示ai*aj=coef1*vec1+...
+
+
+
+###### 3.ad变换 ######
+L := SimpleLieAlgebra("A", 1, Rationals);; #新建A1李代数
+b := Basis(L);; #获取李代数的一组基
+a := AdjointMatrix( b, b[1] ); #获取第一个元素的伴随表示
+
+
+
+
+
+
+
+
+
+

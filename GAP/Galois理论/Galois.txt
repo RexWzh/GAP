@@ -1,0 +1,39 @@
+#Read("zong.grp");
+#伽罗瓦扩张
+Q := Rationals;
+x := X(Q,"x");#多项式不定元
+f := x^2-2;;
+g := x^4-10*x^2+1;;#可做四则运算，同余运算
+Qf := AlgebraicExtension(Q,f);
+Qg := AlgebraicExtension(Q,g);
+a := RootOfDefiningPolynomial(Qf,"a");
+b := RootOfDefiningPolynomial(Qg,"b");
+
+#cos的零化多项式分解
+for i in [1..20] do
+    f := AnnCos(i);
+    fs := Factors(f);
+    if not (Size(fs)=1) then
+        Print(i,"\t",Size(fs),"\n",fs,"\n\n");
+    fi;/
+od;
+
+#cos的极小多项式尝试
+for i in [1..20] do 
+    f := AnnCos(i);s
+    fs := Factors(f);
+    Print(fs[Size(fs)],"\n");
+od;
+
+#Galois扩张尝试
+Q := Rationals;;
+x := X(Q,"x");;
+f := x^2-2;;
+IsSolvable(f);
+
+
+
+
+
+
+

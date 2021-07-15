@@ -1,0 +1,57 @@
+
+#函数：判断换位子集是否构成群
+chk := function(g)
+local comms,sub;
+comms := Set(List(Cartesian(g,g),p->Comm(p[1],p[2]))); #换位子集
+sub := Set(DerivedSubgroup(g)); #g的换位子群
+return Size(comms) = Size(sub);
+end;;
+
+#查找1-100阶群中的反例
+for i in [1..100] do
+    examples := AllSmallGroups(i,chk,false); #检查i阶群所有同构类
+    Print(i,"   ");
+    if Length(examples) > 0 then #存在反例
+        Print("\nFind examples !\nOrder:",i,"\nSum:",Length(examples)); #反例个数
+        break;
+     fi;
+od;
+
+#将反例群表示为置换群
+G1 := Image(IsomorphismPermGroup(examples[1]));; #置换群表示
+G1 := Image(SmallerDegreePermutationRepresentation(G1));;#简化作用表示
+Print(MovedPoints(G1),"\n");; #简化后作用集合
+
+G2 := Image(SmallerDegreePermutationRepresentation(Image(IsomorphismPermGroup(examples[2]))));;
+Print(MovedPoints(G2),"\n");; #群G2的作用集S合
+
+
+#打印函数
+PPrint := function(L)
+local i;
+for i in L do
+Print(i,"\n");
+od;
+end;;
+
+#简化群表示
+SmallerRep := function(G)
+local i,n,G1,G2;
+G := Image(IsomorphismPermGroup(G));
+G2 := G;
+n := NrMovedPoints(G2);
+Print("初始作用集大小：",n,"\n");
+G1 := G;
+for i in [1..100] do
+G1 := Image(SmallerDegreePermutationRepresentation(G));
+if NrMovedPoints(G1)<n  then
+G2 := G1;
+n := NrMovedPoints(G2);
+fi;
+od;
+Print("嵌入群大小",NrMovedPoints(G2));
+return G2;
+end;;
+
+
+IsomorphismGroups(G2,G3);
