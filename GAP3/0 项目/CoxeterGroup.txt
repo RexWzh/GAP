@@ -1,0 +1,59 @@
+### Coxeter群基础函数 ###
+
+PrintRec(G)		#打印相关的rec标签
+
+CoxeterGroup("X",m);	#X取ABCD族
+
+EltWord(G,e);		#文字e转群元素，e取list
+
+CoxeterWord(G,w);	#群元素w转文字
+
+G.reflectionsLabels:="."#更改表达用词
+
+ReducedCoxeterWord(G,e) #表达e的简约表达
+
+ReducedExpressions(G,w)	#群元素w的所有简约表达
+
+Reflections(G)
+G.reflections  		#G上的反射集
+
+G.nbGeneratingReflections	#G的单反射个数
+
+CoxeterLength(G,w) 	#群元w的长度
+
+G.N 			#正根的个数
+
+LongestCoxeterWord(G); 	#最长元素的文字
+
+LongestCoxeterElement(G)#最长元素的表达
+
+CoxeterGroupSymmetricGroup(n)	#coxeter群Sn
+
+Elements(G)		#返回G中所有元素
+
+CoxeterElements(G,k);	#长为k的所有元素
+
+ReflectionSubgroup(G,I)	#抛物子群，I单反射子集(数字列表)
+
+ForEachElement(G,func)	#对G元素迭代进行func，不返回值
+
+
+### Bruhat序 ###
+
+Bruhat(G,y,w)		#判断y<=w
+
+BruhatSmaller(G,w)	#所有比w小的元素,按长度分在不同列表中
+
+IsLeftDescending(G,w,i)	#判断第i个反射是否在w左降集上
+
+FirstLeftDescending(G,w)#w左降集最小指标的一个
+
+LeftDescentSet(G,w)	#w的左降集
+
+
+### Hecke代数 ###
+
+Hecke(G,q,r)		#生成Coxeter群G的hecke代数，q,r可省略
+
+Basis(H,"T")		#生成Hecke代数的T基
+

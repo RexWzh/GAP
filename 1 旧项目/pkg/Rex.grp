@@ -1,0 +1,6 @@
+### 小新工作环境 ###
+
+Read("RexStandard.grp");
+Read("RexLie.grp");
+Rex := [RexStandard,RexLie,
+"Rex: RexStandard RexLie"];

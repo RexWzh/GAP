@@ -1,0 +1,32 @@
+
+Coordination := function(basis,vector)
+    ## 计算向量在基下的坐标 ##
+    local V;
+    V := VectorSpace(Rationals,basis);; #生成线性空间
+    basis := Basis(V,basis); #将向量集转化为基
+    return Coefficients(basis,vector);
+end;;
+Join := function(args...)
+    ## 连接字符串 ##
+    return JoinStringsWithSeparator(args,"");
+end;;
+
+lie := [["A",[1..8]],["D",[4..8]],["E",[6..8]],
+["B",[2..8]],["C",[3..8]],["F",[4]],["G",[2]]];;
+for x in lie do 
+    s:=x[1];
+    for i in x[2] do #单李代数逐个讨论
+        Print(s,i,"\n");
+        R := RootSystem(SimpleLieAlgebra(s,i,Rationals)); #根系
+        positive := PositiveRoots(R); #正根集
+        delta := SimpleSystem(R); #单根集
+        sym := List([1..i],j->X(Rationals,Join("a",j))); #符号变量
+        for root in positive do
+            coo := Coordination(delta,root); #正根坐标
+            root_sym := Sum([1..i],j->coo[j]*sym[j]);
+            Print(root_sym,"\n");
+        od;
+        Print("\n");
+    od;
+od;
+            

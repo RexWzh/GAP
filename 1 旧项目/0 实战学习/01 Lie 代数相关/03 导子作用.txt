@@ -1,0 +1,47 @@
+######## 目标如下 ########
+1.A1李代数的theta作用
+2.一般李代数的theta作用矩阵
+3.求theta交错乘积的阶数
+
+
+###### 1.A1李代数的theta作用 ######
+L := SimpleLieAlgebra("A", 1, Rationals);; #新建A1李代数
+b := Basis(L);; #获取李代数的一组基
+e1 := b[1];;
+f1 := b[2];;
+ade1 := AdjointMatrix( b, e1 );; #求e1的伴随表示
+adf1 := AdjointMatrix( b, f1 );;
+theta1 := LieExp(ade1)*LieExp(-adf1)*LieExp(ade1);
+Eigenvectors(Rationals,theta1); #是否可对角化
+Eigenvalues(Rationals,theta1); #查看特征值
+
+###### 2.一般李代数的theta作用 ######
+LieThetas := function(s,n)
+    ## 求thetai=exp(adei)*exp(-adfi)*exp(adei) 的矩阵表达 ##
+    local L,b,m,ade,adf,theta;
+    L := SimpleLieAlgebra(s,n,Rationals); #新建李代数
+    b := Basis(L); #获取李代数一组基
+    ade := List([1..n],i->AdjointMatrix(b,b[i])); #初始化ei
+    m := (Size(b)-n)/2; #正根总数
+    adf := List([1..n],i->AdjointMatrix(b,b[m+i])); #初始化fi
+    theta := List([1..n],i->LieExp(ade[i])*LieExp(-adf[i])*LieExp(ade[i])); #初始化thetai
+    return theta;
+end;
+
+
+###### 3.求theta交错乘积的阶数 ######
+GroupOrdersMat := function(gens)
+    ## gens交错相乘，阶数构成的矩阵 ##
+    local orders,n,i,j;
+    orders := [];
+    n := Size(gens);
+    for i in [1..n] do 
+        Add(orders,[]);
+        for j in [1..n] do
+            Add(orders[i],Order(gens[i]*gens[j]));
+        od;
+    od;
+    return orders;
+end;;
+
+pprint(GroupOrdersMat(LieThetas("A",2)));

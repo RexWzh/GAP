@@ -1,0 +1,11 @@
+q := X(Rationals);;q.name:="q";;
+H := Hecke(CoxeterGroup("A",2),q);
+T := Basis(H,"T");
+T(1,2)^-1;
+
+# 
+s := "D";
+for n in [3..6] do
+    G:= CoxeterGroup(s,n);
+    Print(n,"\t",G.size,"\n");
+od;

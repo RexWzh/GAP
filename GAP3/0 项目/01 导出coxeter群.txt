@@ -1,0 +1,40 @@
+############ 目标如下 ############
+1.定义函数，导出变量数据
+2.将coxeter群生成元导出
+
+
+###### 1.定义函数，导出变量数据 ######
+Read("Rex3.grp");
+AppendTo(Join([file_path,"1"
+
+ConcatenationString; #连接字符串
+Append #连接字符串（或列表）
+Join #拼接字符串
+
+save_vari := function(name,content,file)
+    ## 保存变量信息 ##
+    AppendTo(file,Join([name,":=",content,";\n\n"],""));
+end;;
+
+
+###### 2.将coxeter群生成元导出 ######
+file := Join([file_path,"\\CoxeterGroups.grp"],"");
+PrintTo(file); #先清空数据
+n := 25; #导出前n阶coxeter群
+A := List([1..n],x->["A",x]);;
+B := List([2..n],x->["B",x]);;
+C := List([2..n],x->["C",x]);;
+D := List([4..n],x->["D",x]);;
+E := List([6,7,8],x->["E",x]);;
+F := [["F",4]];;
+G := [["G",2]];;
+
+
+CoxeterGroups := [E,F,G，A,B,C,D];;
+for i in CoxeterGroups do
+    for j in i do
+        save_vari(Join(j,""),CoxeterGroup(j[1],j[2]).generators,file);
+    od;
+    AppendTo(file,"\n");
+od;
+

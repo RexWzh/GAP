@@ -1,0 +1,19 @@
+#生成群树
+G := CoxeterGroup(3,[3,3,3]);
+Tree := GroupTree(G,5);
+
+#收集其中群元素
+L := [];
+for i in Tree do
+    for j in i do 
+        if IsList(j) then
+            continue;
+        fi;
+        Add(L,j);
+    od;
+od;
+
+#求元素对应的阶
+for i in L do
+    Print(i,"\t",Order(i),"\n");
+od;

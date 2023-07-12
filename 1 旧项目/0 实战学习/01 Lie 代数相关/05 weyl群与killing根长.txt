@@ -1,0 +1,80 @@
+############ 目标如下 ############
+1.生成单李代数根系
+2.根系用基系数表达
+3.生成weyl群
+4.内积关系
+5.求李代数killing型的根长
+
+
+###### 1.生成单李代数根系 ######
+s := "C";;
+i := 3;;
+L := SimpleLieAlgebra(s,i,Rationals);; #生成李代数
+R := RootSystem(L);; #根系
+positive := PositiveRoots(R);; #正根集列表
+positive := PositiveRootVectors(R);  #正根系列表（李代数元素形式）
+negitive := NegitiveRoots(R);; #负根集列表
+negitive := NegitiveRootVectors(R);; #负根集列表（李代数元素形式）
+delta := SimpleSystem(R);; #单根系（列表）
+A := CartanMatrix(R);; #Cartan矩阵
+
+
+###### 2.根系用基系数表示 ######
+s := "C";
+for i in [2..6] do #计算前6阶
+    Print(s,i,":","\n");
+    L := SimpleLieAlgebra(s,i,Rationals);;
+    R := RootSystem(L);;
+    positive := PositiveRoots(R);;
+    delta := SimpleSystem(R);;
+    V := VectorSpace(Rationals,delta);;
+    b := Basis(V,delta);;
+    for root in positive do
+        Print(SymbolizeVector(Coefficients(b,root),"a"),"\n");
+    od;
+    Print("\n","\n");
+od;
+
+
+######  3.生成weyl群 ######
+s := "C";;
+i := 3;;
+R := RootSystem(SimpleLieAlgebra(s,i,Rationals));; #生成根系
+W := WeylGroup(R);
+
+
+###### 4.求李代数killing型的根长 ######
+## B := BilinearFormMat(R); #killing型内积矩阵
+
+s := "C";;
+for i in [2..8] do
+    Print(s,i,":","\t");
+    L := SimpleLieAlgebra(s,i,Rationals);
+    R := RootSystem(L);
+    B := BilinearFormMat(R);
+    for j in [1..Size(B)] do
+        Print(B[j][j],"\t");
+    od;
+    print();
+od;
+
+
+
+A := CartanMatrix(R);; #Cartan矩阵
+chk := function(R,alpha)
+    ## 计算killing型根长（的平方） ##
+    local positive,sum,m,root;
+    positive := PositiveRoots(R); #正根集
+    sum := 0; #累和结果
+    m := alpha*alpha; # alpha 长度平方
+    for root in positive do
+        sum := sum + (alpha*root/m)^2;
+    od;
+    return 1/(sum*2);
+end;;
+
+
+R:=RootSystem(SimpleLieAlgebra("F",4,Rationals));
+sim := SimpleSystem(R);
+
+

@@ -1,0 +1,29 @@
+gap> IsSimpleLieAlgebra := function(L)
+>     ## 判断是否为单李代数（仅可验证有限域） ##
+>     local i,ideal;
+>     for i in L do #跳过0元
+>         if i=Zero(L) then continue;fi; #跳过零元
+>         ideal := Ideal(L,[i]); #元素生成理想
+>         if not ideal=L then #若某个元素生成理想不为L
+>             return ideal;
+>         fi;
+>     od;
+>     return true;
+> end;;
+gap>
+gap> L := SimpleLieAlgebra("A",2,GF(3));; #sl(3,F),charF=3
+gap> IsSimpleLieAlgebra(L); #判断是否单
+<two-sided ideal in <Lie algebra of dimension 8 over GF(3)>, (dimension 1)>
+gap> C := LieCenter(L);; #L的中心
+gap> Lc := L/C;; #L商中心
+gap> IsSimpleLieAlgebra(Lc); #判断是否单
+true
+gap> KillingMatrix(Basis(Lc)); #求killing型矩阵
+[ [ 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3) ],
+  [ 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3) ],
+  [ 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3) ],
+  [ 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3) ],
+  [ 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3) ],
+  [ 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3) ],
+  [ 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3), 0*Z(3) ] ]
+gap>

@@ -1,0 +1,163 @@
+#F  SmallerDegreePermutationRepresentation( <G> )
+##
+InstallGlobalFunction(SmallerDegreePermutationRepresentation,function(G)
+local o, s, k, gut, erg, H, hom, b, ihom, improve, map, loop,
+  i,cheap,first,k2;
+#if not HasSize(G) then Error("SZ");fi;
+  Info(InfoFactor,1,"Smaller degree for order ",Size(G),", deg: ",NrMovedPoints(G));
+  cheap:=ValueOption("cheap");
+  if cheap="skip" then
+    return IdentityMapping(G);
+  fi;
+
+  cheap:=cheap=true;
+
+  # deal with large abelian components first (which could be direct)
+  if cheap<>true then
+    hom:=MaximalAbelianQuotient(G);
+    i:=IndependentGeneratorsOfAbelianGroup(Image(hom));
+    o:=List(i,Order);
+    if ValueOption("norecurse")<>true and
+      Product(o)>20 and Sum(o)*4<NrMovedPoints(G) then
+      Info(InfoFactor,2,"append abelian rep");
+      s:=AbelianGroup(IsPermGroup,o);
+      ihom:=GroupHomomorphismByImagesNC(Image(hom),s,i,GeneratorsOfGroup(s));
+      erg:=SubdirectDiagonalPerms(
+            List(GeneratorsOfGroup(G),x->Image(ihom,Image(hom,x))),
+            GeneratorsOfGroup(G));
+      k:=Group(erg);SetSize(k,Size(G));
+      hom:=GroupHomomorphismByImagesNC(G,k,GeneratorsOfGroup(G),erg);
+      return hom*SmallerDegreePermutationRepresentation(k:norecurse);
+    fi;
+  fi;
+
+
+  if not IsTransitive(G,MovedPoints(G)) then
+    o:=ShallowCopy(OrbitsDomain(G,MovedPoints(G)));
+    Sort(o,function(a,b)return Length(a)<Length(b);end);
+
+    for loop in [1..2] do
+      s:=[];
+      # Try subdirect product
+      k:=G;
+      gut:=[];
+      for i in [1..Length(o)] do
+        s:=Stabilizer(k,o[i],OnTuples);
+        if Size(s)<Size(k) then
+          k:=s;
+          Add(gut,i);
+        fi;
+      od;
+      # reduce each orbit separately
+      o:=o{gut};
+      # second run: now take the big orbits first
+      Sort(o,function(a,b)return Length(a)>Length(b);end);
+    od;
+
+    Sort(o,function(a,b)return Length(a)<Length(b);end);
+
+    erg:=List(GeneratorsOfGroup(G),i->());
+    k:=G;
+    for i in [1..Length(o)] do
+      Info(InfoFactor,1,"Try to shorten orbit ",i," Length ",Length(o[i]));
+      s:=ActionHomomorphism(G,o[i],OnPoints,"surjective");
+      k2:=Image(s,k);
+      k:=Stabilizer(k,o[i],OnTuples);
+      H:=Range(s);
+
+      # is there an action that is good enough for improving the overall
+      # kernel, even if it is not faithful? If so use the best of them.
+      b:=DoActionBlocksForKernel(H,k2);
+      if b<>fail then
+        Info(InfoFactor,2,"Blocks for kernel reduce to ",Length(b));
+        b:=ActionHomomorphism(H,b,OnSets,"surjective");
+        s:=s*b;
+      fi;
+
+      s:=s*SmallerDegreePermutationRepresentation(Image(s));
+      Info(InfoFactor,1,"Shortened to ",NrMovedPoints(Range(s)));
+      erg:=SubdirectDiagonalPerms(erg,List(GeneratorsOfGroup(G),i->Image(s,i)));
+    od;
+    if NrMovedPoints(erg)<NrMovedPoints(G) then
+      s:=Group(erg,());  # `erg' arose from `SubdirectDiagonalPerms'
+      SetSize(s,Size(G));
+      s:=GroupHomomorphismByImagesNC(G,s,GeneratorsOfGroup(G),erg);
+      SetIsBijective(s,true);
+      return s;
+    fi;
+    return IdentityMapping(G);
+  # simple test is comparatively cheap for permgrp
+  elif HasIsSimpleGroup(G) and IsSimpleGroup(G) and not IsAbelian(G) then
+    H:=SimpleGroup(ClassicalIsomorphismTypeFiniteSimpleGroup(G));
+    if IsPermGroup(H) and NrMovedPoints(H)>=NrMovedPoints(G) then
+      return IdentityMapping(G);
+    fi;
+  fi; # transitive/simple treatment
+
+  # if the original group has no stabchain we probably do not want to keep
+  # it (or a homomorphisms pool) there -- make a copy for working
+  # intermediately with it.
+  if not HasStabChainMutable(G) then
+    H:= GroupWithGenerators( GeneratorsOfGroup( G ),One(G) );
+    if HasSize(G) then
+      SetSize(H,Size(G));
+    fi;
+    if HasBaseOfGroup(G) then
+      SetBaseOfGroup(H,BaseOfGroup(G));
+    fi;
+  else
+    H:=G;
+  fi;
+  hom:=IdentityMapping(H);
+  b:=NaturalHomomorphismsPool(H);
+  b.dotriv:=true;
+  AddNaturalHomomorphismsPool(H,TrivialSubgroup(H),hom,NrMovedPoints(H));
+  b.dotriv:=false;
+  ihom:=H;
+  improve:=false; # indicator for first run
+  first:=true;
+  repeat
+    if improve=false and NrMovedPoints(H)*5>Size(H) and
+      IsTransitive(H,MovedPoints(H)) then
+      b:=Blocks(H,MovedPoints(H));
+      map:=ActionHomomorphism(G,b,OnSets,"surjective");
+      ImagesSource(map:onlyimage); #`onlyimage' forces same generators
+      b:=KernelOfMultiplicativeGeneralMapping(map);
+      AddNaturalHomomorphismsPool(G,b,map);
+      if Size(b)=1 then
+        H:=Image(map);
+        Info(InfoFactor,2," first improved to degree ",NrMovedPoints(H));
+        hom:=hom*map;
+        ihom:=H;
+      fi;
+    fi;
+    improve:=false;
+    b:=NaturalHomomorphismsPool(H);
+    b.dotriv:=true;
+    if first then # only once!
+      b.GopDone:=false;
+      DoCheapActionImages(H);
+      CloseNaturalHomomorphismsPool(H,TrivialSubgroup(H));
+      first:=false;
+    fi;
+    b.dotriv:=false;
+    map:=GetNaturalHomomorphismsPool(H,TrivialSubgroup(H));
+    if map<>fail and Image(map)<>H then
+      improve:=true;
+      H:=Image(map);
+      Info(InfoFactor,2,"improved to degree ",NrMovedPoints(H));
+      hom:=hom*map;
+      ihom:=H;
+    fi;
+  until improve=false;
+
+  o:=DegreeNaturalHomomorphismsPool(H,TrivialSubgroup(H));
+  if cheap<>true and (IsBool(o) or o*2>=NrMovedPoints(H)) then
+    s:=GenericFindActionKernel(ihom,TrivialSubgroup(ihom),NrMovedPoints(ihom));
+    if s<>fail then
+      hom:=hom*s;
+    fi;
+  fi;
+
+  return hom;
+end);

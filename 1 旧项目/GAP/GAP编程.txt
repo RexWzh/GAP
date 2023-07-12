@@ -1,0 +1,35 @@
+### GAP3 �� GAP4 ���� ###
+GAP3 ѭ��û��break��
+GAP3 ���������м�return��
+
+
+
+
+
+PageResource 	#��ȡԴ����
+
+Display		 #�Ժ�����ʽ��ӡ
+
+Filtered(list,fun) #����list�Ϻ����жϳ�����Ԫ��
+
+List(list,fun)	 #list���δ���fun�����ֵ�õ����б�
+
+PrintArray 	#��ӡ��ʽ 
+
+Size() 		#�ṹ�Ľ�
+
+Length()	#�б��Ľ�
+
+Reversed()	#�б���ת
+
+TransposedMat()	#�б�ת�ã���Ҫ��ά��
+
+
+
+### record assignment ###
+
+r := rec()	#��ʼ��record����
+
+rec.name := obj	#���ú�׺
+
+### Ⱥ�Ƚṹ����Ϊrecord���ͣ�����Ϊ�䶨���׺ ###

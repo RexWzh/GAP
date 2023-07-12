@@ -1,0 +1,24 @@
+SmallerRep := function(G)
+local i,n,G1,G2;
+G := Image(IsomorphismPermGroup(G));
+G2 := G;
+n := NrMovedPoints(G2);
+#Print("初始作用集大小：",n,"\n");
+G1 := G;
+for i in [1..1000] do
+G1 := Image(SmallerDegreePermutationRepresentation(G));
+if NrMovedPoints(G1)<n  then
+G2 := G1;
+n := NrMovedPoints(G2);
+fi;
+od;
+return G2;
+end;;
+
+***********
+函数如下
+IsomorphismPermGroup #化为置换群
+Image #像
+SmallerDegreePermutationRepresentation #降低嵌入群函数
+PageSource(SmallerDegreePermutationRepresentation);
+

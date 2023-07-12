@@ -1,0 +1,130 @@
+############ 目标如下 ############
+1.正根用单根和表示
+2.正根的正根和分解
+
+###### 1.正根用单根和表示 ######
+
+SymbolicPositiveRoots := function(s,n...)
+    ## 打印正根系的单根表示（符号表示） ##
+    local R,m,positive,delta,delta_sym,coos,coos_sym,feedback;
+    feedback := false;
+    if Length(n) = 2 then 
+        feedback := n[2];
+    fi;
+    n := n[1]; 
+    R := RootSystem(SimpleLieAlgebra(s, n, Rationals));
+    positive := PositiveRoots(R);; #正根集列表
+    delta := SimpleSystem(R);; #单根系（列表）
+    delta_sym := List([1..n],i->X(Rationals,Join("a",i)));; #单根符号化
+    m := Length(positive);;
+    coos := List(positive,root->Coordination(delta,root));; #正根坐标集
+    coos_sym := List([1..m],i->coos[i]*delta_sym);;
+    Print(s,n,":\n");
+    for m in coos_sym do
+        print(m);
+    od;
+    if feedback then
+        return coos_sym;
+    fi;
+end;
+b:=SymbolicPositiveRoots("D",4,true);
+
+###### 2.正根和分解 ######
+
+RootsFactorial := function(root,positive,n)
+    ## root分解为正根之和，返回正根系下的坐标 ##
+    local coo,m,delta,tail,a,b,c,new,out;
+    delta := List([1..n],i->positive[i]); #初始化单根
+    coo := Coordination(delta,root); #获取root在基下的系数
+    if ForAny(coo,i -> i<0) then #判断是否有负系数项
+        print("输入不为正根！");return false;
+    fi;
+    m := Size(positive); #正根系个数
+    Append(coo,List([Size(coo)+1..m],i->0)); #补充末尾0系数
+    out := [[coo]]; #初始化输出数据
+    n := 1; #解的层数
+    while true do
+        tail := []; #初始化新一层解
+        for coo in out[n] do #遍历最后一层解
+            for a in [1..m] do #遍历各个位置的系数（正根）
+                if coo[a]=0 then continue; fi;
+                for b in [1..m] do
+                    if coo[b]=0 then continue; fi;
+                    if b=a then continue; fi;
+                    root := positive[a] + positive[b]; 
+                    if not root in positive then continue; fi;
+                    c := Position(positive,root); #定位和向量位置
+                    new := ShallowCopy(coo); #浅复制坐标
+                    new[a] := new[a] - 1;
+                    new[b] := new[b] - 1;
+                    new[c] := new[c] + 1;
+                    if new in tail then continue; fi;
+                    Add(tail,new); #添加新元素
+                od;
+            od;
+        od;
+        if Length(tail)=0 then break; fi;
+        n := n + 1;
+        Append(out,[tail]); #加入新一层解
+    od;
+    new := [];
+    for tail in out do
+        Append(new,tail);
+    od;
+    return new;
+end;
+
+## 测试 ##
+s := "B";; n := 3;;
+R := RootSystem(SimpleLieAlgebra(s, n, Rationals));;
+positive := PositiveRoots(R);; #正根集列表
+m := Size(positive);;
+root := positive[m];; #待分解根
+res := RootsFactorial(root,positive,n);;
+#pprint(res);;
+
+## 打印符号结果 ##
+sym := List([1..m],i->X(Rationals,Join("f",i)));; #符号变量
+res_sym := []; #符号结果
+for element in res do
+    ele := [];
+    for j in [1..m] do
+        if element[j]<>0 then
+            Add(ele,element[j]*sym[j]);
+        fi;
+    od;
+    Add(res_sym,ele);
+od;
+for i in res_sym do
+    print(i);
+od;
+
+b:=SymbolicPositiveRoots("D",4,true);
+for element in res do
+    for i in [1..size(element)] do
+    print(List([1..Size(element)],i->b[i]*element[i]));
+od;
+
+
+IfElse := function(bool,IfTrue,Else)
+    ## 一个方便的工具 ##
+    if bool then 
+        return IfTrue;
+    else 
+        return Else;
+    fi;
+end;
+
+
+ListIf := function(list,value,chk)
+    ## 模仿Python的列表生成器 ##
+    local new,i;
+    new := [];
+    for i in list do
+        if chk(i) then 
+            Add(new,value(i));
+        fi;
+    od;
+    return new;
+end;
+

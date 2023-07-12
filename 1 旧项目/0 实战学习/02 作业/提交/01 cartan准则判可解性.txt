@@ -1,0 +1,58 @@
+IsLieSolvableByCartan := function(A)
+    ## 通过cartan准则判断A是否可解（对adA验证） ##
+    local b,x,y,z;
+    b := AdjointBasis(Basis(A)); #获取A基的伴随表示
+    for x in b do
+        for y in b do
+            for z in b do
+                if not Trace((x*y-y*x)*z)=0 then
+                    return false;
+                fi;
+            od;
+        od;
+    od;    
+    return true;
+end;;
+
+#通过结构常数生成例1中的李代数
+T := EmptySCTable(3,0,"antisymmetric");; #新建结构常数列表
+SetEntrySCTable( T, 1, 2, [1,3] ); #填写结构常数表格
+SetEntrySCTable( T, 1, 3, [1,2] );
+A := AlgebraByStructureConstants( Rationals, T );; #由结构常数生成表格
+
+IsLieAlgebra(A); #判断是否为李代数
+IsLieNilpotent(A); #判断是否幂零
+IsLieSolvable(A); #判断是否可解
+
+IsLieSolvableByCartan(A); #用cartan准则方法判断是否可解
+IsLieSolvableByCartan(SimpleLieAlgebra("A",2,Rationals)); #对单李代数检验
+
+
+########## 命令行结果 ##########
+gap> IsLieSolvableByCartan := function(A)
+>     ## 通过cartan准则判断A是否可解（对adA验证） ##
+>     local b,x,y,z;
+>     b := AdjointBasis(Basis(A)); #获取A基的伴随表示
+>     for x in b do
+>         for y in b do
+>             for z in b do
+>                 if not Trace((x*y-y*x)*z)=0 then
+>                     return false;
+>                 fi;
+>             od;
+>         od;
+>     od;
+>     return true;
+> end;;
+gap>
+gap> #通过结构常数生成例1中的李代数
+gap> T := EmptySCTable(3,0,"antisymmetric");; #新建结构常数列表
+gap> SetEntrySCTable( T, 1, 2, [1,3] ); #填写结构常数表格
+gap> SetEntrySCTable( T, 1, 3, [1,2] );
+gap> A := AlgebraByStructureConstants( Rationals, T );; #由结构常数生成表格
+gap> IsLieAlgebra(A); #判断是否为李代数
+true
+gap> IsLieSolvableByCartan(A); #用cartan准则方法判断是否可解
+true
+gap> IsLieSolvableByCartan(SimpleLieAlgebra("A",2,Rationals)); #对单李代数检验
+false

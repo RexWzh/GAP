@@ -1,0 +1,74 @@
+
+s := "B";;
+m := 2;;
+n := 4;;
+res := [];; #返回结果
+for i in [m..n] do
+    L := SimpleLieAlgebra(s,i,Rationals); #单李代数（特征0域）
+    R := RootSystem(L);
+    p := Size(PositiveRoots(R)); #正根个数
+    M := KillingMatrix(Basis(L)); #killing型矩阵
+    Add(res,[i,M[1][p+1],M[i][p+i]]); #添加非零结果
+od;
+A:4,8,10,12...
+B:[a,a*2]:6,10,14,18...
+C:[a,a*2]:6,8,10,12...
+D:12,16,20,24...
+E: 24,36,60;
+F:36,18;
+G:24,8;
+
+
+chk := function(s,n)
+    ## 求单李代数的killing型矩阵行列式 ##
+    local L,M,fac,factors,out;
+    L := SimpleLieAlgebra(s,n,Rationals); #单李代数（特征0域）
+    M := KillingMatrix(Basis(L)); #killing型矩阵
+    fac := DeterminantMat(M); #计算行列式
+    factors := FactorsInt(AbsInt(fac)); #因子分解
+    out := List(Set(factors),fac->[fac,Number(factors,i->(i=fac))]);
+    if fac<0 then Add(out,[-1,1]);fi; #添上负号
+    return out;
+end;;
+
+lie := [["A",[1..8]],["D",[4..8]],["E",[6..8]],
+["B",[2..8]],["C",[3..8]],["F",[4]],["G",[2]]];;
+
+for x in lie do 
+    s:=x[1];
+    for i in x[2] do
+    Print(s,i,"： ",chk(s,i),"\n"); #打印结果 
+    od;
+od;
+
+s := "B";;
+for i in [2..10] do #计算A1-A5结果
+    out := chk(s,i); #代入函数
+    Print(s,i,"\n",out,"\n"); #打印结果 
+od;
+
+
+s := "C";;
+for i in [3..10] do #计算A1-A5结果
+    out := chk(s,i); #代入函数
+    Print(s,i,"\n",out,"\n"); #打印结果 
+od;
+
+
+s := "D";;
+for i in [4..10] do #计算A1-A5结果
+    out := chk(s,i); #代入函数
+    Print(s,i,"\n",out,"\n"); #打印结果 
+od;
+
+EFG := [["E","E","E","F","G"],[6,7,8,4,2]]; #非经典李代数
+for i in [1..5] do #计算A1-A5结果
+    out := chk(EFG[1][i],EFG[2][i]); #计算行列式
+    Print(EFG[1][i],EFG[2][i],"\n",out,"\n"); #打印结果 #打印结果 
+od;
+
+Combine := function(factors)
+    ## 合并因子 ##
+    return List(Set(factors),fac->[fac,Number(factors,i->(i=fac))]); 
+end;
+

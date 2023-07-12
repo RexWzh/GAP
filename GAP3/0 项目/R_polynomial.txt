@@ -1,0 +1,130 @@
+
+######## 求Coxeter Group 的R多项式 ###########
+
+R_polinomial := function(G,x,w)
+    local H,q,T,lw,lx,r;
+    
+    #新建Hecke代数
+    q := X(Rationals);	#不定元
+    q.name := "q";
+    H := Hecke(G,q);	#Hecke代数
+    T := Basis(H,"T");	#H的T基
+    
+    #w与x的长度
+    lw := CoxeterLength(G,w);
+    lx := CoxeterLength(G,x);
+    
+    r := T(w^-1)^-1;	#求逆
+    r := (-q)^(lw)*(-1)^lx*Coefficient(r,x);
+    return r;
+end;
+
+### 代码实例 ###
+G := CoxeterGroup("A",3);;
+x := EltWord(G,[1,2]);
+w := EltWord(G,[1,2,3,1]);
+R_polinomial(G,x,w);
+
+
+############### Coxeter 群的R多项式 #################
+
+R_polinomial_finite := function(G)
+    local H,q,T,elements,w,x,a,pol,R,lx,lw;
+    
+    #新建Hecke代数
+    q := X(Rationals);	#不定元
+    q.name := "q";
+    H := Hecke(G,q);	#Hecke代数
+    T := Basis(H,"T");	#H的T基
+    
+    elements := Elements(G);#G的元素集合，从小到大排列
+    pol := [];		#R多项式
+    for w in elements do
+        lw := CoxeterLength(G,w); #w的长度
+        w := T(w^-1)^-1;	#Tw^-1的逆
+        R := [];		#R*,w
+        for x in elements do
+            lx := CoxeterLength(G,x); #x长度
+            a := (-q)^(lw)*(-1)^lx*Coefficient(w,x); #Rx,w
+            Add(R,a);
+        od;
+        Add(pol,R);
+    od;
+    pol := TransposedMat(pol);#转置得到Rx,w形式的列表
+    return pol;
+end;;
+
+### 代码实例 ###
+
+#猜想：R多项式均可以化为 R1,w
+n := 3;;
+G := CoxeterGroup("A",n); 	#新建coxeter群
+Size(G);
+pols := R_polinomial_finite(G);;#获取R多项式
+a := Set(pols[1]);;		#R1,w多项式
+b := [];
+for i in pols do
+    Append(b,i);
+    b := Set(b);
+od;
+Print(Length(b),"\t",Length(a)+1,"\n");
+
+#n=3时，G有720阶，R多项式共518400个
+
+############ 猜想：R多项式均可以化为 R1,w ############
+
+chk_conjecture_R := function(G)
+    local H,q,T,elements,w,x,a,R,lx,lw,Tw;
+    flag := False;
+    
+    #数据初始化
+    q := X(Rationals);	#不定元
+    q.name := "q";
+    H := Hecke(G,q);	#Hecke代数
+    T := Basis(H,"T");	#H的T基    
+    elements := Elements(G);#G的元素集合，从小到大排列
+
+    #初始化R*,w0的多项式集
+    R := [0*q];		
+    w := LongestCoxeterElement(G); #最长元素
+    lw := CoxeterLength(G,w);	#w长度
+    Tw := T(w^-1)^-1;	#Tw^-1的逆
+    for x in elements do
+        lx := CoxeterLength(G,x); #x长度
+        a := (-q)^(lw)*(-1)^lx*Coefficient(Tw,x); #Rx,w
+        Add(R,a);
+    od;
+    R := Set(R);
+
+    for w in elements do
+        lw := CoxeterLength(G,w); #w的长度
+        Tw := T(w^-1)^-1;	#Tw^-1的逆
+        for x in elements do
+            lx := CoxeterLength(G,x); #x长度
+            a := (-q)^lw*(-1)^lx*Coefficient(Tw,x); #Rx,w
+            if not a in R then
+                Print("Conjecture Failed !\n");
+                Print("R(x,w) = ",a,"\nx = ",CoxeterWord(G,x),"\nw = ",CoxeterWord(G,w),"\n");
+                return false;
+            fi;
+        od;
+    od;
+    Print("Conjecture succeeded in this case !\n");
+    #return true;
+end;;
+
+### 代码实例 ###
+n := 3;
+chk_conjecture_R(CoxeterGroup("A",n));
+
+#反例
+G := CoxeterGroup("A",3);
+x := [2];
+w := [ 1, 2, 3, 2, 1 ];
+
+### 代码实例2 ###
+for n in [2..100] do
+    G := CoxeterGroup("I",2,n);
+    Print("check ",n,"\n");
+    chk_conjecture_R(G);
+od;

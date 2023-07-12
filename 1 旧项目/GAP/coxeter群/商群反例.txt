@@ -1,0 +1,15 @@
+G := CoxeterGroup(3,[3,3,3]);;
+H := G/[(G.1*G.2*G.3)^2];;
+Order(H.1*H.2);
+Order(H.1*H.3);
+Order(H.3*H.2);
+Order(H.1);
+Order(H.2);
+Order(H.3);
+
+Gs := AllSmallGroups(18);;
+for i in Gs do
+    if not IsBool(IsomorphismGroups(H,i)) then 
+        break;
+    fi;
+od;

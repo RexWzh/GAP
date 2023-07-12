@@ -1,0 +1,69 @@
+G := CoxeterGroup(3,[2,3,3]);;
+gens := GeneratorsOfGroup(G);;
+k := 6;;
+L := List([1..k],x->[]);;
+L[1]:=List(gens);;
+S:=Union(L[1],[gens[1]^2]);;
+for i in [2..k] do
+    s:=[];
+    for x in L[i-1] do
+        if IsList(x) then
+            continue;
+        fi;
+        for y in gens do
+            y:=x*y;;
+            if y in S then
+                Add(L[i],[y,1]);
+            elif y in s then
+                Add(L[i],[y,2]);
+            else
+                Add(L[i],y);
+                Add(s,y);
+            fi;
+         od;
+    od;
+    S:=Union(S,s);
+od;
+PPrint(L);
+
+**************************************************
+#2类断点重复信息
+for i in L do  #
+    for j in i do 
+        if IsList(j) and j[2]=2 then
+            Print(j[1],"\t",Match(j[1],S),"\n");
+        fi;
+    od;
+od;
+
+**************************************************
+#统计各阶个数
+k := Size(T);;
+l := List([1..k],x->0);;
+for i in [1..k] do 
+    for j in T[i] do 
+        if IsList(j) then
+            continue;
+        fi;
+        l[i] := l[i] + 1;
+    od;
+od;
+Print(l);
+
+**************************************************
+#环路测试
+G := CoxeterGroup(3,[3,3,3]);
+T := GroupTree(G,12);;
+#3/1(1,0)
+
+G := CoxeterGroup(4,[3,2,3,3,2,3]);
+T := GroupTree(G,12);;
+#4/2(1,0,2)
+
+G := CoxeterGroup(5,[3,2,3,2,2,3,3,2,2,3]);
+T := GroupTree(G,12);;
+#5/6(1,0,5,0)
+
+G := CoxeterGroup(6,[3,2,3,2,2,3,2,2,2,3,3,2,2,2,3]);
+T := GroupTree(G,5);;
+#6/24(1,-3,21,3,2)
